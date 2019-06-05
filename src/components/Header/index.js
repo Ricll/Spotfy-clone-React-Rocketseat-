@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Search, User } from './styles.css';
+import { Container, Search, User } from './styles';
 
 const Header = () => (
   <Container>
