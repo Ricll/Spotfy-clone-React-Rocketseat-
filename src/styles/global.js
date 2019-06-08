@@ -20,4 +20,8 @@ body {
   font-family: "Montserrat", sans-serif; /* sans-serif segunda opção*/
   color: #FFF
 }
+
+button {
+  cursor: pointer;
+}
 `;

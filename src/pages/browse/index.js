@@ -1,47 +1,63 @@
-import React from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Creators as PlaylistsActions } from '../../store/ducks/playlists';
 import {
   Container, Title, List, Playlist,
 } from './styles';
+import Loading from '../../components/Loading';
 
-const Browse = () => (
-  <Container>
-    <Title>Navegar</Title>
-    <List>
-      <Playlist to="/playlists/1">
-        <img
-          src="https://townsquare.media/site/366/files/2014/10/Foo-Fighters2.jpg?w=980&q=75"
-          alt="Playlist"
-        />
-        <strong>Rock and Roll</strong>
-        <p>Relaxa enquanto você programa</p>
-      </Playlist>
-      <Playlist to="/playlists/1">
-        <img
-          src="https://townsquare.media/site/366/files/2014/10/Foo-Fighters2.jpg?w=980&q=75"
-          alt="Playlist"
-        />
-        <strong>Rock and Roll</strong>
-        <p>Relaxa enquanto você programa</p>
-      </Playlist>
-      <Playlist to="/playlists/1">
-        <img
-          src="https://townsquare.media/site/366/files/2014/10/Foo-Fighters2.jpg?w=980&q=75"
-          alt="Playlist"
-        />
-        <strong>Rock and Roll</strong>
-        <p>Relaxa enquanto você programa</p>
-      </Playlist>
-      <Playlist to="/playlists/1">
-        <img
-          src="https://townsquare.media/site/366/files/2014/10/Foo-Fighters2.jpg?w=980&q=75"
-          alt="Playlist"
-        />
-        <strong>Rock and Roll</strong>
-        <p>Relaxa enquanto você programa</p>
-      </Playlist>
-    </List>
+class Browse extends Component {
+  static propTypes = {
+    getPlaylistsRequest: PropTypes.func.isRequired,
+    playlists: PropTypes.shape({
+      data: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number,
+        title: PropTypes.string,
+        thumbnail: PropTypes.string,
+        description: PropTypes.string,
 
-  </Container>
-);
+      })),
+      loading: PropTypes.bool,
+    }).isRequired,
+  }
 
-export default Browse;
+  componentDidMount() {
+    const { getPlaylistsRequest } = this.props;
+    getPlaylistsRequest();
+  }
+
+  render() {
+    const { playlists } = this.props;
+    return (
+      <Container>
+        <Title>Navegar{playlists.loading && <Loading />}</Title>
+        <List>
+          {playlists.data.map(playlist => (
+            <Playlist to="/playlists/1">
+              <img
+                src={playlist.thumbnail}
+                alt={playlist.title}
+              />
+              <strong>{playlist.title}</strong>
+              <p>{playlist.description}</p>
+            </Playlist>
+
+          ))}
+
+        </List>
+
+      </Container>
+    );
+  }
+}
+
+const mapStateToProps = state => ({
+  playlists: state.playlists,
+
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators(PlaylistsActions, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(Browse);
